@@ -1,38 +1,43 @@
 import telebot
-import os
 import yt_dlp
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+import os
 from keep_alive import keep_alive
 keep_alive()
+
 api_key = os.environ["BOT_TOKEN"]
 bot = telebot.TeleBot(api_key)
-
-#inilinebutton
-
 
 
 @bot.message_handler(commands=["start"])
 def welcome(message):
-    bot.reply_to(message, "به ربات دانلود یوتیوب خوش آمدید!\nلطفاً لینک ویدیوی یوتیوب را بفرستید.")
+    bot.reply_to(message, "سلام! لینک ویدیوی یوتیوب را بفرستید تا لینک دانلود برایتان ساخته شود.")
 
-@bot.message_handler()
-def dyt(message):
-    text = message.text
-    print(text)
-   
-    url = text
+@bot.message_handler(func=lambda message: True)
+def download_youtube(message):
+    url = message.text
+    print("لینک دریافت شده:", url)
 
     try:
-        ytt = {}
+        ydl_opts = {
+            'format': 'best',
+            'quiet': True,
+            'skip_download': True,
+            'cookiefile': 'cookies.txt',  # فایل کوکی کنار اسکریپت باشد
+        }
 
-        with yt_dlp.YoutubeDL(ytt) as dlp:
+        with yt_dlp.YoutubeDL(ydl_opts) as dlp:
             info = dlp.extract_info(url, download=False)
-            te = info['url']
-            butt = InlineKeyboardButton(text="button" , url=te)
-            buty = InlineKeyboardMarkup(row_width=1)
-            buty.add(butt)
-            bot.send_message(message.chat.id , "download link" , reply_markup=buty)
+            video_url = info.get('url')
+
+        # ساخت دکمه برای لینک دانلود
+        button = InlineKeyboardButton(text="دانلود ویدیو", url=video_url)
+        markup = InlineKeyboardMarkup().add(button)
+
+        bot.send_message(message.chat.id, "لینک دانلود ویدیو آماده است:", reply_markup=markup)
+
     except Exception as e:
-        print(e)
+        print("خطا:", e)
+        bot.send_message(message.chat.id, "خطا در دریافت لینک! احتمالاً باید کوکی‌ها به‌روز شوند یا لینک نامعتبر است.")
 
 bot.polling(skip_pending=True)
