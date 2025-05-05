@@ -1,8 +1,9 @@
 import telebot
+import os
 import yt_dlp
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 
-api_key = "7801225750:AAEqJnAvQgGI7pXXKemNkW3yp4qrdz1JOIU"
+api_key = os.environ("BOT_TOKEN")
 bot = telebot.TeleBot(api_key)
 
 uurl = {}  # ذخیره لینک و فرمت‌های هر کاربر
