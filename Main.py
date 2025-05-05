@@ -1,11 +1,9 @@
 import telebot
 import yt_dlp
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-import os
-from keep_alive import keep_alive
-keep_alive()
 
-api_key = os.environ["BOT_TOKEN"]
+
+api_key = ("7801225750:AAEqJnAvQgGI7pXXKemNkW3yp4qrdz1JOIU")
 bot = telebot.TeleBot(api_key)
 
 
